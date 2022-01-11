@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+
+<!--
+Copyright (c) 2022, ARTEL ROBOTICS.
+
+All rights reserved.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+
+<robot name="artel_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!--Includes-->
+  <xacro:include filename="$(find urdf_tutorial)/urdf/common_properties.xacro"/>
+  <xacro:include filename="$(find zed_wrapper)/urdf/include/materials.urdf.xacro" />
+ 
+  <!--Arguments-->
+  <xacro:arg name="robot_model"  default='neo'/>
+  <xacro:arg name="base_frame"   default="base_link" />
+  
+  <!--Properties-->
+  <xacro:property name="M_PI"     value="3.1415926535897931" />
+  <xacro:property name="model"    value="$(arg robot_model)/" />
+  
+  <xacro:if value="${model == 'no/'}">
+        <xacro:property name="model" value="" />
+  </xacro:if>
+  
+  <!-- base_link -->
+  <link name="${model}$(arg base_frame)">
+    <visual>
+      <geometry>
+        <cylinder length="0.001" radius="0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </visual>
+  </link>
+  
+  <!--Left Wheel-->
+  <joint name="$(arg base_frame)_left_wheel_joint" type="fixed">
+      <parent link="${model}$(arg base_frame)"/>
+      <child link="${model}left_wheel"/>
+      <origin xyz="0 0.5 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${model}left_wheel">
+    <visual>
+      <origin xyz="0 0 0" rpy="1.57 0 0" />
+      <geometry>
+        <cylinder radius="0.1" length="0.05"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+  </link>
+  
+  <!--Right Wheel-->
+  <joint name="$(arg base_frame)_right_wheel_joint" type="fixed">
+      <parent link="${model}$(arg base_frame)"/>t_
+      <child link="${model}right_wheel"/>
+      <origin xyz="0 -0.5 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${model}right_wheel">
+      <visual>
+        <origin xyz="0 0 0" rpy="1.57 0 0" />
+        <geometry>
+          <cylinder radius="0.1" length="0.05"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+  </link>
+  
+  <!--Zed Camera-->
+  <joint name="$(arg base_frame)_zed2_camera_joint" type="fixed">
+      <parent link="${model}$(arg base_frame)"/>
+      <child link="${model}zed2_camera"/>
+      <origin xyz="0.75 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${model}zed2_camera">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://neo_urdf/meshes/zed2.stl" />
+        </geometry>
+        <material name="black"/>
+      </visual>
+  </link>
+
+  <!--Front Lidar-->
+  <joint name="$(arg base_frame)_front_lidar_joint" type="fixed">
+      <parent link="${model}$(arg base_frame)"/>
+      <child link="${model}front_lidar"/>
+      <origin xyz="0.75 0.5 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${model}front_lidar">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.05" length="0.05"/>
+        </geometry>
+        <material name="blue"/>
+      </visual>
+  </link>
+
+  <!--Back Lidar-->
+  <joint name="$(arg base_frame)_back_lidar_joint" type="fixed">
+      <parent link="${model}$(arg base_frame)"/>
+      <child link="${model}back_lidar"/>
+      <origin xyz="-0.75 -0.5 0" rpy="0 0 3.14"/>
+  </joint>
+
+  <link name="${model}back_lidar">
+      <visual>
+        <origin xyz="0.0 0.0 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.05" length="0.05"/>
+        </geometry>
+        <material name="blue"/>
+      </visual>
+  </link>
+
+  <!--IMU-->
+  <joint name="$(arg base_frame)_imu_joint" type="fixed">
+      <parent link="${model}$(arg base_frame)"/>
+      <child link="${model}imu"/>
+      <origin xyz="0 0 0.2" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${model}imu">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.01 0.01 0.01"/>
+        </geometry>
+        <material name="white"/>
+      </visual>
+  </link>
+
+  <!--Charge Reciver-->
+  <joint name="$(arg base_frame)_charge_reciver_joint" type="fixed">
+      <parent link="${model}$(arg base_frame)"/>
+      <child link="${model}charge_reciver"/>
+      <origin xyz="-0.45 0.5 0" rpy="0 0 1.57"/>
+  </joint>
+  
+  <link name="${model}charge_reciver">
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.07 0.04 0.04"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+  </link>
+
+</robot>
